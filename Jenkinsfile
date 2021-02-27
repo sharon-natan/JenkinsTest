@@ -42,7 +42,7 @@ pipeline {
         stage('Start Container') {
             steps {
                 script {
-                    def conainer = docker.image("${imageName}:${gitCommit}").withRun("-p 3000:3000 --name ${containerName["fronted"]}")
+                    def conainer = docker.image("${imageName}:${gitCommit}").withRun('-p 3000:3000 --name containerName["fronted"]')
                     runningContainers = sh 'docker ps'
                     isContainerUp = runningContainers.contain({containerName["fronted"]})
                 }
