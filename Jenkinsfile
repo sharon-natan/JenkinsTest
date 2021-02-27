@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     gitCommit = sh (script: 'git rev-parse --short HEAD', returnStdout: true)
-                    def imageReact = docker.build("${imageName}:${gitCommit}", "${frontedDockerfilePath}")
+                    def imageReact = docker.build("${imageName}:${gitCommit}", "${frontedDockerfilePath} .")
                     //def customImage = docker.build("my-image:${gitCommit} -f ${dockerfile} ./docker-create-react-app")
                 }
             }
