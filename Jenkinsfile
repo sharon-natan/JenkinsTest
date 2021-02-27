@@ -1,6 +1,6 @@
 // Define Variables
 def gitCommit = ""
-def isImageCreated = False
+def isImageCreated = false
 
 pipeline {
     agent any
