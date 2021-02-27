@@ -45,7 +45,7 @@ pipeline {
                     //def conainer = docker.image("${imageName}:${gitCommit}").withRun('-p 3000:3000')
                     sh "docker run -d -p 3000:3000 --name ${containerName["fronted"]} ${imageName}:${gitCommit}"
                     runningContainers = sh 'docker ps'
-                    isContainerUp = runningContainers.contain({containerName["fronted"]})
+                    isContainerUp = runningContainers.contains({containerName["fronted"]})
                 }
             }
         }
@@ -55,7 +55,7 @@ pipeline {
         always {
             script {
                 if(isContainerUp) {
-                    sh "docker kill ${containerName["fronted"]}"
+                    sh "docker rm ${containerName["fronted"]} -f"
                 }
                 if(isImageCreated){
                     sh "docker image rm ${imageName}:${gitCommit} --force"
