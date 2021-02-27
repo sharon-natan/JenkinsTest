@@ -30,9 +30,12 @@ pipeline {
                     imageInfo = sh (script: "docker image inspect ${imageName}:${gitCommit}", returnStdout: true)
                     if(!imageInfo){
                         isImageCreated = true
+                        echo 'TRUEEEE'
+                    } else {
+                        echo 'FALSEEEE'
                     }
 
-                    echo isImageCreated
+                    //echo isImageCreated
                 }
             }
         }
