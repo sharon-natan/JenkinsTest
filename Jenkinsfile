@@ -13,6 +13,8 @@ pipeline {
     }
 
     post {
-        echo 'hi'
+        always {
+            echo 'hi'
+        }
     }
 }
