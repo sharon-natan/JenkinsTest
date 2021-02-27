@@ -8,6 +8,14 @@ def frontedDockerfilePath = "./docker-create-react-app"
 pipeline {
     agent any
     stages {
+        stage('Config pipeline') {
+            steps {
+                script {
+                    sh 'git config --global user.name "Jenkins CI"'
+                    sh 'git config --global user.email jenkinsCI@jenkins.com'
+                }
+            }    
+        }
         stage('Create new Image') {
             steps {
                 // Build new Image
@@ -19,7 +27,7 @@ pipeline {
                 // Test if it created
 
                 script {
-                    isImageCreated = sh (script: "docker image ls | grep ${imageName}:${gitCommit}", returnStdout: true)
+                    isImageCreated = sh (script: "docker image inspect ${imageName}:${gitCommit}", returnStdout: true)
                     echo isImageCreated
                 }
             }
