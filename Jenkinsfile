@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     gitCommit = sh (script: 'git rev-parse --short HEAD', returnStdout: true)
-                    def imageReact = docker.build("react:${gitCommit}", "-f ${dockerfile}", "./docker-create-react-app/")
+                    def imageReact = docker.build("react:${gitCommit}", "./docker-create-react-app/")
                 }
             }
         }
@@ -18,7 +18,7 @@ pipeline {
 
     post {
         always {
-            sh 'testing'
+            echo 'testing'
         }
     }
 }
