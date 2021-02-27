@@ -30,7 +30,7 @@ pipeline {
 
                 script {
                     imageInfo = sh (script: "docker images ${imageName}", returnStdout: true)
-                    isImageCreated = imageInfo.contain("${imageName}")
+                    isImageCreated = imageInfo.contains("${imageName}")
                     
                     if (!isImageCreated){
                         currentBuild.result = 'ABORTED'
