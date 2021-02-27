@@ -30,7 +30,7 @@ pipeline {
 
                 script {
                     imageInfo = sh (script: "docker images ${imageName}", returnStdout: true)
-                    isImageCreated = imageInfo.contains("${imageName}")
+                    isImageCreated = imageInfo.contains(imageName)
                     
                     if (!isImageCreated){
                         currentBuild.result = 'ABORTED'
@@ -42,7 +42,8 @@ pipeline {
         stage('Start Container') {
             steps {
                 script {
-                    def conainer = docker.image("${imageName}:${gitCommit}").withRun('-p 3000:3000')
+                    //def conainer = docker.image("${imageName}:${gitCommit}").withRun('-p 3000:3000')
+                    sh "docker run -d -p 3000:3000 --name ${containerName["fronted"]} ${imageName}:${gitCommit}"
                     runningContainers = sh 'docker ps'
                     isContainerUp = runningContainers.contain({containerName["fronted"]})
                 }
