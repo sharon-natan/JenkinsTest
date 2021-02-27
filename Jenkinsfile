@@ -1,9 +1,14 @@
 pipeline {
     agent any
+    
+    // Define Variables
+    def gitCommit
+    def isImageCreated = false
+
     stages {
-        stage('test') {
+        stage('Create new Image') {
             steps {
-                echo 'hi'
+                sh 'ls -l'
             }
         }
     }
