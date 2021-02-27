@@ -27,7 +27,11 @@ pipeline {
                 // Test if it created
 
                 script {
-                    isImageCreated = sh (script: "docker image inspect ${imageName}:${gitCommit}", returnStdout: true)
+                    imageInfo = sh (script: "docker image inspect ${imageName}:${gitCommit}", returnStdout: true)
+                    if(!imageInfo){
+                        isImageCreated = true
+                    }
+
                     echo isImageCreated
                 }
             }
