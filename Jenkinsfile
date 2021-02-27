@@ -12,8 +12,8 @@ pipeline {
             steps {
                 script {
                     gitCommit = sh (script: 'git rev-parse --short HEAD', returnStdout: true)
-                    def imageReact = docker.build("${imageName}:${gitCommit} -f ${dockerfile} ${frontedDockerfilePath}")
-                    //def customImage = docker.build("my-image:${gitCommit} -f ${dockerfile} ./docker-create-react-app")
+                    //def imageReact = docker.build("${imageName}:${gitCommit}", "-f ${dockerfile} ${frontedDockerfilePath}")
+                    sh "docker build -t ${imageName}:${gitCommit} -f ${dockerfile} ${frontedDockerfilePath}"
                 }
             }
         }
