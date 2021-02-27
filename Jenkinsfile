@@ -1,5 +1,5 @@
 // Define Variables
-def gitCommit = None
+def gitCommit = ""
 def isImageCreated = False
 
 pipeline {
