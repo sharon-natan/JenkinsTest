@@ -1,9 +1,11 @@
 // Define Variables
 def gitCommit = ""
 def isImageCreated = false
+def isContainerUp = false
 def dockerfile = "Dockerfile"
 def imageName = "fronted-react"
 def frontedDockerfilePath = "./docker-create-react-app"
+def containerName = ["fronted": "react_container", "backend": "backend_container"]
 
 pipeline {
     agent any
@@ -27,16 +29,22 @@ pipeline {
                 // Test if it created
 
                 script {
-                    imageInfo = sh (script: "docker image inspect checking:${gitCommit}", returnStdout: true)
-                    echo imageInfo
-                    if(!imageInfo.isEmpty()){
-                        isImageCreated = true
-                        echo 'TRUEEEE'
-                    } else {
-                        echo 'FALSEEEE'
+                    imageInfo = sh (script: "docker images ${imageName}", returnStdout: true)
+                    isImageCreated = imageInfo.contain(imageName)
+                    
+                    if (!isImageCreated){
+                        currentBuild.result = 'ABORTED'
+                        error('Image could not be built.')
                     }
-
-                    //echo isImageCreated
+                }
+            }
+        }
+        stage('Start Container') {
+            steps {
+                script {
+                    def conainer = docker.image("${imageName}:${gitCommit}").withRun("-p 3000:3000 --name ${containerName["fronted"]}")
+                    runningContainers = sh 'docker ps'
+                    isContainerUp = runningContainers.contain({containerName["fronted"]})
                 }
             }
         }
@@ -44,7 +52,12 @@ pipeline {
 
     post {
         always {
-            echo 'testing'
+            if(isContainerUp) {
+                sh "docker kill ${containerName["fronted"]}"
+            }
+            if(isImageCreated){
+                sh "docker image rm ${imageName}:${gitCommit} --force"
+            }
         }
     }
 }
