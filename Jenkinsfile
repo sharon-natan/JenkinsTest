@@ -44,7 +44,7 @@ pipeline {
                 script {
                     //def conainer = docker.image("${imageName}:${gitCommit}").withRun('-p 3000:3000')
                     sh "docker run -d -p 3000:3000 --name ${containerName["fronted"]} ${imageName}:${gitCommit}"
-                    runningContainers = sh 'docker ps'
+                    runningContainers = sh (script: 'docker ps', returnStdout: true)
                     isContainerUp = runningContainers.contains({containerName["fronted"]})
                 }
             }
