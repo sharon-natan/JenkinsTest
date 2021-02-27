@@ -52,11 +52,13 @@ pipeline {
 
     post {
         always {
-            if(isContainerUp) {
-                sh "docker kill ${containerName["fronted"]}"
-            }
-            if(isImageCreated){
-                sh "docker image rm ${imageName}:${gitCommit} --force"
+            script {
+                if(isContainerUp) {
+                    sh "docker kill ${containerName["fronted"]}"
+                }
+                if(isImageCreated){
+                    sh "docker image rm ${imageName}:${gitCommit} --force"
+                }
             }
         }
     }
