@@ -47,7 +47,7 @@ pipeline {
                     sh "docker run -d -p 3000:3000 --name ${containerName["fronted"]} ${imageName}:${gitCommit}"
                     runningContainers = sh (script: 'docker ps', returnStdout: true)
                     isContainerUp = runningContainers.contains(containerName["fronted"])
-                    containerInfo["fronted"] = sh (script: "docker conainer inspect ${containerName["fronted"]}", returnStdout: true)
+                    containerInfo["fronted"] = sh (script: "docker container inspect ${containerName["fronted"]}", returnStdout: true)
                     echo containerInfo["fronted"]
 
                     if (!isContainerUp){
