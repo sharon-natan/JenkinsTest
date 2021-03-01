@@ -48,7 +48,7 @@ pipeline {
                     runningContainers = sh (script: 'docker ps', returnStdout: true)
                     isContainerUp = runningContainers.contains(containerName["fronted"])
                     containerInfo["fronted"] = sh (script: "docker container inspect ${containerName["fronted"]}", returnStdout: true)
-                    echo containerInfo["fronted"]
+                    echo containerInfo["fronted"]["Created"]
 
                     if (!isContainerUp){
                         currentBuild.result = 'ABORTED'
