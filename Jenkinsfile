@@ -6,6 +6,7 @@ def dockerfile = "Dockerfile"
 def imageName = "fronted-react"
 def frontedDockerfilePath = "./docker-create-react-app"
 def containerName = ["fronted": "react_container", "backend": "backend_container"]
+def containerInfo = ["fronted": "", "backend": ""]
 
 pipeline {
     agent any
@@ -46,6 +47,13 @@ pipeline {
                     sh "docker run -d -p 3000:3000 --name ${containerName["fronted"]} ${imageName}:${gitCommit}"
                     runningContainers = sh (script: 'docker ps', returnStdout: true)
                     isContainerUp = runningContainers.contains(containerName["fronted"])
+                    containerInfo["fronted"] = sh (script: "docker conainer inspect ${conainerName["fronted"]}", returnStdout: true)
+                    echo containerInfo["fronted"]
+
+                    if (!isContainerUp){
+                        currentBuild.result = 'ABORTED'
+                        error('The container could not start.')
+                    }
                 }
             }
         }
