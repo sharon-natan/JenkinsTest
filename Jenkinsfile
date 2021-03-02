@@ -6,7 +6,7 @@ def dockerfile = "Dockerfile"
 def imageName = "frontend-react"
 def frontendDockerfilePath = "./docker-create-react-app"
 def containerName = ["frontend": "react_container", "backend": "backend_container"]
-def containerIP = ["frontend": "", "backend": ""]
+def containerInfo = ["frontend": "", "backend": ""]
 
 pipeline {
     agent any
