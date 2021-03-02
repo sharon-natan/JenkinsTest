@@ -47,7 +47,7 @@ pipeline {
                     sh "docker run -d -p 3000:3000 --name ${containerName["frontend"]} ${imageName}:${gitCommit}"
                     runningContainers = sh (script: 'docker ps', returnStdout: true)
                     isContainerUp = runningContainers.contains(containerName["frontend"])
-                    containerIP["frontend"] = sh (script: "docker container inspect ${containerName["frontend"]}  | grep IPAddress | grep -v \"SecondaryIPAddresses\" | tr -d ' ' | uniq | awk -F \" '{print $4}'", returnStdout: true)
+                    containerIP["frontend"] = sh (script: "docker container inspect ${containerName["frontend"]}  | grep IPAddress | grep -v \"SecondaryIPAddresses\" | tr -d ' ' | uniq | awk -F \ '{print $4}'", returnStdout: true)
 
                     if (!isContainerUp){
                         currentBuild.result = 'ABORTED'
