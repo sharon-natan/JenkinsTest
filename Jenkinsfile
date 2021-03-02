@@ -3,10 +3,10 @@ def gitCommit = ""
 def isImageCreated = false
 def isContainerUp = false
 def dockerfile = "Dockerfile"
-def imageName = "fronted-react"
-def frontedDockerfilePath = "./docker-create-react-app"
-def containerName = ["fronted": "react_container", "backend": "backend_container"]
-def containerInfo = ["fronted": "", "backend": ""]
+def imageName = "frontend-react"
+def frontendDockerfilePath = "./docker-create-react-app"
+def containerName = ["frontend": "react_container", "backend": "backend_container"]
+def containerIP = ["frontend": "", "backend": ""]
 
 pipeline {
     agent any
@@ -24,7 +24,7 @@ pipeline {
                 // Build new Image
                 script {
                     gitCommit = sh (script: 'git rev-parse --short HEAD | tr "\n" " "', returnStdout: true)
-                    def imageReact = docker.build("${imageName}:${gitCommit}", "-f ${frontedDockerfilePath}/${dockerfile} ${frontedDockerfilePath}")
+                    def imageReact = docker.build("${imageName}:${gitCommit}", "-f ${frontendDockerfilePath}/${dockerfile} ${frontendDockerfilePath}")
                 }
 
                 // Test if it created
@@ -44,17 +44,25 @@ pipeline {
             steps {
                 script {
                     //def conainer = docker.image("${imageName}:${gitCommit}").withRun('-p 3000:3000')
-                    sh "docker run -d -p 3000:3000 --name ${containerName["fronted"]} ${imageName}:${gitCommit}"
+                    sh "docker run -d -p 3000:3000 --name ${containerName["frontend"]} ${imageName}:${gitCommit}"
                     runningContainers = sh (script: 'docker ps', returnStdout: true)
-                    isContainerUp = runningContainers.contains(containerName["fronted"])
-                    containerInfo["fronted"] = sh (script: "docker container inspect ${containerName["fronted"]}", returnStdout: true)
-                    containerInfo["fronted"] = readJson text: containerInfo["fronted"]
-                    echo containerInfo["fronted"]
+                    isContainerUp = runningContainers.contains(containerName["frontend"])
+                    containerIP["frontend"] = sh (script: "docker container inspect ${containerName["frontend"]}  | grep IPAddress | grep -v "SecondaryIPAddresses" | tr -d ' ' | uniq | awk -F \" '{print $4}'", returnStdout: true)
 
                     if (!isContainerUp){
                         currentBuild.result = 'ABORTED'
                         error('The container could not start.')
                     }
+                }
+            }
+        }
+
+        stage('Testing') {
+            steps{
+                script {
+                      def response = httpRequest "http://${containerIP["frontend"]}:3000"
+                      println("Status: "+response.status)
+                      println("Content: "+response.content)
                 }
             }
         }
@@ -64,7 +72,7 @@ pipeline {
         always {
             script {
                 if(isContainerUp) {
-                    sh "docker rm ${containerName["fronted"]} -f"
+                    sh "docker rm ${containerName["frontend"]} -f"
                 }
                 if(isImageCreated){
                     sh "docker image rm ${imageName}:${gitCommit} --force"
