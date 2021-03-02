@@ -47,7 +47,7 @@ pipeline {
                     sh "docker run -d -p 3000:3000 --name ${containerName["frontend"]} ${imageName}:${gitCommit}"
                     runningContainers = sh (script: 'docker ps', returnStdout: true)
                     isContainerUp = runningContainers.contains(containerName["frontend"])
-                    containerIP["frontend"] = sh (script: "docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${containerName["frontend"]}", returnStdout:true)
+                    containerIP["frontend"] = sh (script: "docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${containerName["frontend"]} | tr '\n' ' '", returnStdout:true)
                     echo containerIP["frontend"]
 
                     if (!isContainerUp){
