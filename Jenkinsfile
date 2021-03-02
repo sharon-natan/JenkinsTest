@@ -6,7 +6,7 @@ def dockerfile = "Dockerfile"
 def imageName = "frontend-react"
 def frontendDockerfilePath = "./docker-create-react-app"
 def containerName = ["frontend": "react_container", "backend": "backend_container"]
-def containerInfo = ["frontend": "", "backend": ""]
+def containerIP = ["frontend": "", "backend": ""]
 
 pipeline {
     agent any
@@ -47,8 +47,8 @@ pipeline {
                     sh "docker run -d -p 3000:3000 --name ${containerName["frontend"]} ${imageName}:${gitCommit}"
                     runningContainers = sh (script: 'docker ps', returnStdout: true)
                     isContainerUp = runningContainers.contains(containerName["frontend"])
-                    containerInfo["frontend"] = sh (script: "docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${containerName["frontend"]}", returnStdout:true)
-                    echo containerInfo["frontend"]
+                    containerIP["frontend"] = sh (script: "docker inspect --format '{{ .NetworkSettings.IPAddress }}' ${containerName["frontend"]}", returnStdout:true)
+                    echo containerIP["frontend"]
 
                     if (!isContainerUp){
                         currentBuild.result = 'ABORTED'
